@@ -1,36 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
+// import { useEffect, useState } from "react";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
+import BookList from "./components/BookList";
+// import fetchBooks from "./services/api-client";
+import useBooks from "./services/useBooks";
+import { useState } from "react";
+import BookDetail from "./components/BookDetail";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [selectedBook, setSelectedBook] = useState(null);
+  const { books, loading, setSearchTerm } = useBooks("fiction");
+  // const [books, setBooks] = useState([]);
+  // const [searchTerm, setSearchTerm] = useState("Java");
+  // const [loading, setLoadsing] = useState(false);
+
+  // url: https://www.googleapis.com/books/v1/volumes?q=javascript
+
+  // useEffect(() => {
+  //   fetchData();
+
+  // }, [searchTerm]);
+
+  // const fetchData = async () => {
+  //   setLoadsing(true);
+  //   try {
+  //     const items = await fetchBooks(searchTerm);
+  //     setBooks(items);
+  //     setLoadsing(false);
+  //   } catch (error) {
+  //     if (error.name !== "abort error") {
+  //       console.log("Failed to fetch books:", error);
+  //     }
+  //   } finally {
+  //     setLoadsing(false);
+  //   }
+  // };
+
+  function handleSearch(query) {
+    setSearchTerm(query);
+  }
+
+  function handleSeeMore(book) {
+    setSelectedBook(book.volumeInfo);
+  }
+
+  function handleCloseModal() {
+    setSelectedBook(null);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="">
+        <NavBar onSearch={handleSearch} />
+
+        {loading ? (
+          <p className="placeholder-glow display-3 text-body-secondary">
+            <span className="placeholder col-12">Loading...</span>
+          </p>
+        ) : (
+          <BookList books={books} onSeeMore={handleSeeMore} />
+        )}
+{/* 
+        {selectedBook && <p>{selectedBook.volumeInfo.title}</p>} */}
+
+        <Footer />
+
+     { selectedBook &&  <BookDetail book={selectedBook} onClose = {handleCloseModal} />}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button className="btn btn-primary" onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
