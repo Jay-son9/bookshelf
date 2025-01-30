@@ -6,7 +6,7 @@ async function fetchBooks(query, controller) {
   try {
     const response = await fetch(`${BASE_URL}/volumes?q=${query}`, {signal: controller.signal});
     if (!response.ok) {
-      throw new Error(`API cal failed: ${response.status}`);
+      throw new Error(`API call failed: ${response.status}`);
     }
     const data = await response.json();
     return data.items || [];
